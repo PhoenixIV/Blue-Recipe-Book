@@ -1,0 +1,106 @@
+plugins {
+    id "com.gradleup.shadow" version "9.2.2"
+    id "me.modmuss50.mod-publish-plugin" version "2.2.1"
+}
+
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+    modImplementation "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
+    modImplementation "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}+${rootProject.minecraft_version}-neoforge"
+    modLocalRuntime "mezz.jei:jei-${rootProject.minecraft_version}-neoforge:${rootProject.jei_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mod_id", rootProject.escapedModId
+    inputs.property "mod_name", rootProject.escapedModName
+    inputs.property "mod_description", rootProject.escapedModDescription
+    inputs.property "mod_license", rootProject.escapedModLicense
+    inputs.property "mod_authors", rootProject.escapedModAuthors
+    inputs.property "mod_contributors", rootProject.escapedModContributors
+    inputs.property "mod_homepage", rootProject.escapedModHomepage
+    inputs.property "mod_issues", rootProject.escapedModIssues
+    inputs.property "minecraft_version_range", minecraft_version_range
+    inputs.property "neoforge_version_range", neoforge_version_range
+    inputs.property "loader_version_range", loader_version_range
+    inputs.property "architectury_version", architectury_version
+    inputs.property "yacl_version", yacl_version
+    inputs.property "minecraft_version", minecraft_version
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand "version": project.version,
+                "mod_id": rootProject.escapedModId,
+                "mod_name": rootProject.escapedModName,
+                "mod_description": rootProject.escapedModDescription,
+                "mod_license": rootProject.escapedModLicense,
+                "mod_authors": rootProject.escapedModAuthors,
+                "mod_contributors": rootProject.escapedModContributors,
+                "mod_homepage": rootProject.escapedModHomepage,
+                "mod_issues": rootProject.escapedModIssues,
+                "minecraft_version_range": minecraft_version_range,
+                "neoforge_version_range": neoforge_version_range,
+                "loader_version_range": loader_version_range,
+                "architectury_version": architectury_version,
+                "yacl_version": yacl_version,
+                "minecraft_version": minecraft_version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+    targetNamespace = "named"
+}
+
+def githubToken = providers.environmentVariable("GITHUB_TOKEN")
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = providers.environmentVariable("RELEASE_CHANGELOG")
+            .orElse("${rootProject.mod_name} ${project.version} for Minecraft ${rootProject.minecraft_version}.")
+    type = ALPHA
+    displayName = "${rootProject.mod_name} ${project.version}"
+    modLoaders.add("neoforge")
+    // Absent token means a local check. GitHub Actions supplies GITHUB_TOKEN, which publishes.
+    dryRun = githubToken.getOrNull() == null
+
+    github {
+        accessToken = githubToken
+        repository = rootProject.mod_homepage - "https://github.com/"
+        commitish = providers.environmentVariable("GITHUB_SHA").orElse("main")
+        tagName = "v${project.version}"
+    }
+}
+
+loom.runs.configureEach {
+    if (name == "client") {
+        vmArg "-Dbluerecipebook.devToggle=true"
+    }
+}

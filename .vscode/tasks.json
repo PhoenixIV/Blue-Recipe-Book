@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build NeoForge jar",
+      "type": "shell",
+      "command": "${workspaceFolder}\\build.cmd",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Render readme pages",
+      "type": "shell",
+      "command": "py -3 \"${workspaceFolder}\\tools\\readme\\render_readme.py\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+---
+description: Python comments and code documentation, when to write them and how
+globs: **/*.py, **/*.pyi, **/*.pyw
+alwaysApply: false
+---
+
+# Comments and docstrings
+
+Write no comment by default. Write one only when the reader would otherwise miss something the code and names cannot say: a reason, a trap, or a contract. If deleting it would not confuse the next reader, leave it out.
+
+- Keep a comment to three sentences, sections aside. A longer reason goes in the project's notes, not in `AGENTS.md`. A script's module docstring may also be its usage message, and that text can be longer.
+- Do not describe what a line or block does. Rename or extract a function instead.
+- Do not repeat a name, signature, or annotation. Types stay in the annotation.
+- Do not say where code is used, which task added it, or what it replaced. That goes stale.
+- State only what the code or the user told you. A guessed intent is worse than no comment.
+- When you change code, update or delete the comment above it.
+- Do not add comments to code you did not change. Do not remove existing ones unless their code is gone or they are wrong.
+
+## Line comments
+
+Use `#` for a trap the code hides: a required order, a branch that looks unfinished but is deliberate. Put it on the line it explains. Leave a space after `#`. An end-of-line comment has at least two spaces before the `#`.
+
+Good, it gives a reason the code cannot show:
+
+```python
+# An unfocused box still paints its selection, so a dropped focus looks ready.
+if not self.focused:
+    self.unfocus_search()
+
+width = len(label) + 2  # The frame is one pixel of padding on each side.
+```
+
+Bad, it repeats the code:
+
+```python
+# Loop over the recipes.
+for holder in recipes:
+```
+
+## Docstrings
+
+A docstring is the first statement of a module, class, or function, and the module one comes before the imports. Write it as `"""triple double quotes"""`. Write one when the contract is more than the name: what the caller must do first, what stays untouched, what empty or `None` means, what a later call undoes. Skip one that only restates the name, and skip an override that keeps the parent's contract.
+
+- Open with a summary sentence. A function gets an imperative phrase ("Return ...", "Clear ..."). A class, module, or attribute gets a noun phrase. Not "This function ..." and not "Returns ...".
+- Say what the caller gets, not how it works.
+- Parameters go under `Args`, the result under `Returns`, an exception the caller must handle under `Raises`, in that order.
+- Name a parameter only when the name and annotation leave something out: a unit, a range, what empty or `None` means. Leave the others out.
+- A section line is `name: text`. Capitalize it, and end a sentence with a period.
+- One line, with the closing quotes on that line, when there are no sections. Otherwise a blank line between the summary and the sections, and the closing quotes on their own line.
+
+Bad, every line restates the signature:
+
+```python
+def result_name(holder: RecipeHolder) -> str:
+    """Gets the result name.
+
+    Args:
+        holder: The recipe holder.
+
+    Returns:
+        The result name.
+    """
+```
+
+Good, one line with the part the signature hides:
+
+```python
+def result_name(holder: RecipeHolder) -> str:
+    """Return the lowercase result name, cached per recipe until the index is rebuilt."""
+```
+
+Good, sections where the parameters need meaning:
+
+```python
+def report_held_items(missing: list[ResourceLocation], unreadable: int) -> None:
+    """Log one warning for saved item ids the loaded game no longer has.
+
+    Does nothing when there is nothing to report.
+
+    Args:
+        missing: Item ids that are not in the item registry.
+        unreadable: The number of saved lines that were not ids.
+    """
+```

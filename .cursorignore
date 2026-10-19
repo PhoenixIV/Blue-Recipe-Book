@@ -1,0 +1,8 @@
+# Overrides .gitignore for Cursor only. Git does not read this file,
+# so local/ stays untracked.
+# Without the negation, Cursor skips the folder for search and for the index.
+!/local/
+!/local/**
+
+# The negation above would otherwise pull the nested repo into the index.
+/local/.git/

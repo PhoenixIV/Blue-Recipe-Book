@@ -1,0 +1,122 @@
+name: 🐞 Bug report
+description: Something the book already does is going wrong.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The book is in alpha. It opens on the inventory and the crafting table, on Minecraft 1.21.1 with NeoForge.
+        A missing station, Fabric, or another Minecraft version is not a bug yet.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you report
+      description: Other game versions and Fabric are not supported yet.
+      options:
+        - label: I am on the latest version of Blue Recipe Book, Architectury, and YetAnotherConfigLib.
+          required: true
+        - label: I tried this with only these three mods installed, or I will name the other mod required that caused the issue.
+          required: true
+        - label: I searched the [open bug reports](https://github.com/PhoenixIV/Blue-Recipe-Book/issues?q=is%3Aissue%20state%3Aopen%20label%3Abug) and this is not already listed.
+          required: true
+
+  - type: input
+    id: minecraft-version
+    attributes:
+      label: Minecraft version
+      description: A version number, not the word "latest".
+      placeholder: "1.21.1"
+    validations:
+      required: true
+
+  - type: input
+    id: neoforge-version
+    attributes:
+      label: NeoForge version
+      description: From the log, or the NeoForge jar in the mods folder.
+      placeholder: "21.1.233"
+    validations:
+      required: true
+
+  - type: input
+    id: mod-version
+    attributes:
+      label: Blue Recipe Book version
+      description: The version in the jar name.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: world
+    attributes:
+      label: World
+      options:
+        - Singleplayer
+        - Multiplayer
+        - Lan
+        - Realms
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: What should someone do to see this?
+      placeholder: |
+        1. Open a crafting table
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Game log
+      description: |
+        If you think it helps.
+        Reproduce the issue, then close the game. `latest.log` is in that instance's `logs` folder.
+        Upload it to https://mclo.gs/ and paste the link. If the game crashed, add that report the same way.
+        Dropping the file here is also fine. Pasting the log text is not.
+      placeholder: https://mclo.gs/......
+    validations:
+      required: false
+
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other mods involved
+      description: Name the mods that seem to matter, or the modpack (name, version, and a link).
+      placeholder: |
+        - Create 6.0.10  https://modrinth.com/mod/create
+        - Just Enough Items 31.14.0.72  https://www.curseforge.com/minecraft/mc-mods/jei
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or a video
+      description: In case you did not already embed it in the report. Drop files here, or paste a link.
+    validations:
+      required: false

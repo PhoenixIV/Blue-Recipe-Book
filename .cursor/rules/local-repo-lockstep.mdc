@@ -1,0 +1,17 @@
+---
+description: Git work in the Blue Recipe Book repo, including commits, staging, cleaning, and resets. Use when running any git command here.
+alwaysApply: false
+---
+
+# local/ folder
+
+The main repo ignores `local/`, so main-repo git commands do not track it.
+
+- Never run a cleaning command in the main repo that would remove `local/`, such as `git clean -X` or `git clean -fdx`.
+- Never add a remote to a repo in `local/`.
+- Never `git add -f local/` or stage it from the main repo.
+
+## Lockstep (only if `local/.git` exists)
+
+- When you commit in the main repo, also commit pending changes in `local/` with the same message.
+- Read-only commands (status, log, diff) need no commit in `local/`.

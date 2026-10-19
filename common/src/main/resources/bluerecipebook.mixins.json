@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.bluerecipebook.client.screen.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "InventoryScreenMixin",
+    "CraftingScreenMixin",
+    "RecipeBookComponentAccess",
+    "RecipeBookComponentMixin",
+    "RecipeToastMixin",
+    "ClientCommonPacketListenerMixin",
+    "ClientPacketListenerMixin",
+    "MinecraftServerAccess",
+    "RealmsConnectMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

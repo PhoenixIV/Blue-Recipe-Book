@@ -1,0 +1,15 @@
+---
+description: Confirm a breaking change to player data or settings before writing it. Older files must still load.
+globs: common/src/main/java/dev/bluerecipebook/client/data/**/*.java,common/src/main/java/dev/bluerecipebook/client/discover/DiscoveryFiles.java,common/src/main/java/dev/bluerecipebook/client/discover/DiscoveryOrder.java,common/src/main/java/dev/bluerecipebook/client/strict/HeldItems.java,common/src/main/java/dev/bluerecipebook/client/strict/StrictDiscovery.java,common/src/main/java/dev/bluerecipebook/client/BookSettings.java
+alwaysApply: false
+---
+
+# Saved files stay readable
+
+When the bytes already on disk would still mean the same thing, stop here. Do not look up the format.
+
+A change to what an existing player file means raises `FORMAT` in `PlayerDataUpdater`. Change `SINCE` only in that case. The updater reads every earlier number, migrates that folder when it is opened, and then writes the current layout.
+
+A breaking change in `BookSettings` still reads an old `bluerecipebook.json` and updates that file when it loads.
+
+Confirm any format update with the user before writing it. Stop to confirm.

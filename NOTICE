@@ -1,0 +1,21 @@
+Blue Recipe Book includes this third-party software.
+
+
+
+────── Github Slugger ──────────────────────────────────────────────────────────
+
+
+tools/readme/vendor/github_slugger/
+
+github-slugger 0.0.3 by Martin Heidegger
+https://github.com/martinheidegger/github_slugger
+
+Python port of github-slugger by Dan Flettre:
+https://github.com/Flet/github-slugger
+Copyright (c) 2015, Dan Flettre <fletd01@yahoo.com>
+
+Licensed under the ISC License. See the LICENSE file in that directory.
+
+
+────────────────────────────────────────────────────────────────────────────────
+

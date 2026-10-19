@@ -1,0 +1,81 @@
+---
+description: Java comments and code documentation, when to write them and how
+globs: **/*.java
+alwaysApply: false
+---
+
+# Comments and Javadoc
+
+Write no comment by default. Write one only when the reader would otherwise miss something the code and names cannot say: a reason, a trap, or a contract. If deleting it would not confuse the next reader, leave it out.
+
+- Keep a comment to three sentences, tags aside. A longer reason goes in the project's notes, not in `AGENTS.md`.
+- Do not describe what a line or block does. Rename or extract a method instead.
+- Do not repeat a member's name or signature in its doc.
+- Do not say where code is used, which task added it, or what it replaced. That goes stale.
+- State only what the code or the user told you. A guessed intent is worse than no comment.
+- When you change code, update or delete the comment above it.
+- Do not add comments to code you did not change. Do not remove existing ones unless their code is gone or they are wrong.
+
+## Line comments
+
+Use `//` for a trap the code hides: a vanilla or mixin quirk, a required order, a branch that looks unfinished but is deliberate. Put it on the line it explains.
+
+Good, it gives a reason the code cannot show:
+
+```java
+// An unfocused box still paints its selection, so a dropped focus looks ready.
+if (!this.focused) {
+    this.unfocusSearch();
+}
+```
+
+Bad, it repeats the code:
+
+```java
+// Loop over the recipes.
+for (RecipeHolder<?> holder : recipes) {
+```
+
+## Javadoc
+
+Write one when the contract is more than the name says: what the caller must do first, what stays untouched, what an empty or null argument means, what a later packet or tick undoes. Skip simple getters and overrides that keep the parent's contract.
+
+- Open with a summary sentence. A method gets a third-person verb phrase ("Returns ...", "Clears ..."). A class or field gets a noun phrase. Not "This method ...".
+- Say what the caller gets, not how it works.
+- Parameters go in `@param`, the result in `@return`, an exception the caller must handle in `@throws`, in that order.
+- Tag only what adds something the name and type do not: a unit, a range, what empty or null means. Leave other parameters untagged.
+- A tag text is a lowercase phrase without a final period.
+- Use `{@code}` for code in prose and `{@link}` where a reader would want to jump.
+- A doc with no tags that fits on one line is `/** ... */`. Otherwise put a blank ` *` line before the tags.
+
+Bad, every line restates the signature:
+
+```java
+/**
+ * Gets the result name.
+ *
+ * @param holder the recipe holder
+ * @return the result name
+ */
+private String resultName(RecipeHolder<?> holder) {
+```
+
+Good, one line with the part the signature hides:
+
+```java
+/** Returns the lowercase result name, cached per recipe until the index is rebuilt. */
+private String resultName(RecipeHolder<?> holder) {
+```
+
+Good, tags where the parameters need meaning:
+
+```java
+/**
+ * Logs one warning for saved item ids the loaded game no longer has.
+ * Does nothing when there is nothing to report.
+ *
+ * @param missing item ids that are not in the item registry
+ * @param unreadable the number of saved lines that were not ids
+ */
+public static void reportHeldItems(List<ResourceLocation> missing, int unreadable) {
+```

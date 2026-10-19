@@ -1,0 +1,87 @@
+plugins {
+    id "architectury-plugin" version "3.4.162"
+    id "dev.architectury.loom" version "1.11.458" apply false
+}
+
+architectury {
+    minecraft = rootProject.minecraft_version
+}
+
+def modText = { String key ->
+    def value = findProperty(key)
+    value == null ? "" : value.toString().trim()
+}
+
+def escaped = { String value ->
+    value.replace('\\', '\\\\').replace('"', '\\"').replace('\r\n', '\n').replace('\n', '\\n').replace('\r', '\\n')
+}
+
+// Fabric wants one list entry per person. The placeholder sits inside ["..."], so the join supplies the quotes between names.
+def fabricPeople = { String key ->
+    modText(key).split(',').collect { escaped(it.trim()) }.findAll { it }.join('", "')
+}
+
+ext.escapedModId = escaped(modText("mod_id"))
+ext.escapedModName = escaped(modText("mod_name"))
+ext.escapedModDescription = escaped(modText("mod_description"))
+ext.escapedModLicense = escaped(modText("mod_license"))
+ext.escapedModAuthors = escaped(modText("mod_authors"))
+ext.escapedModContributors = escaped(modText("mod_contributors"))
+ext.fabricModAuthors = fabricPeople("mod_authors")
+ext.fabricModContributors = fabricPeople("mod_contributors")
+ext.escapedModHomepage = escaped(modText("mod_homepage"))
+ext.escapedModIssues = escaped(modText("mod_issues"))
+ext.escapedModSources = escaped(modText("mod_sources"))
+
+allprojects {
+    group = rootProject.mod_group
+    version = rootProject.mod_version
+}
+
+subprojects {
+    if (name == "neoforge") {
+        ext["loom.platform"] = "neoforge"
+    }
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "architectury-plugin"
+
+    base {
+        archivesName = "${rootProject.mod_id}-${project.name}"
+    }
+
+    loom {
+        silentMojangMappingsLicense()
+    }
+
+    repositories {
+        exclusiveContent {
+            forRepository {
+                maven { url = "https://maven.blamejared.com" }
+            }
+            filter {
+                includeGroup "mezz.jei"
+            }
+        }
+        maven { url = "https://maven.architectury.dev/" }
+        maven { url = "https://maven.isxander.dev/releases" }
+        maven { url = "https://maven.terraformersmc.com/releases/" }
+        maven { url = "https://maven.neoforged.net/releases/" }
+        maven { url = "https://maven.fabricmc.net/" }
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        mappings loom.officialMojangMappings()
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+        options.release = 21
+    }
+}

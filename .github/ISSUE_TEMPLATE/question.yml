@@ -1,0 +1,17 @@
+name: 🤔 Question
+description: Something about the book that is not a bug or a new feature.
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If the book is doing something wrong, use Bug report.
+        If you want something it does not do yet, use Feature.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true

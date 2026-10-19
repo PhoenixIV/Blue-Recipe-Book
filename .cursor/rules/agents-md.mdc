@@ -1,0 +1,25 @@
+---
+description: How to edit AGENTS.md without bloating it. Use when changing AGENTS.md.
+globs: AGENTS.md
+alwaysApply: false
+---
+
+# Editing AGENTS.md
+
+AGENTS.md loads into every agent session, so each line costs context every time. Keep it to rules an agent needs in most sessions. Mechanics, history, and detail go in `notes/`, with a one-line pointer from AGENTS.md.
+
+## Before adding a line
+
+- Is it needed in most sessions? If not, write a note in `notes/`, add it to `notes/00_overview.md`, and point to it.
+- Does a note already say it? Link to the note. Do not repeat it.
+- Is it how something works? Put the explanation in a note. AGENTS.md keeps the hard rule.
+- Describe the current state only. Do not record what changed or what used to be true.
+
+## Before removing a line
+
+- Do not delete a rule just to shorten the file. Move the detail to a note, and keep the hard rule and the pointer in AGENTS.md.
+- Check that the moved text is in the note before deleting it from AGENTS.md.
+
+## Size
+
+There is no hard size limit. When AGENTS.md grows noticeably, review it against `local/agent-lookup-log.md`. A fact agents keep searching for belongs near the top. A long rule that is rarely needed belongs in a note. Ask the user before cutting a rule.

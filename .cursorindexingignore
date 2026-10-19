@@ -1,0 +1,16 @@
+# Out of the search index. A direct read by path still works.
+# .cursorignore would block that, so these paths do not belong there.
+
+# Knowledge-base articles. The overview stays searchable so a query can
+# find the topic list. Open one article by path. Indexing every article
+# would pull those answers into unrelated searches.
+/notes/*
+!/notes/00_overview.md
+
+# local/ is gitignored. .cursorignore has the same negation, which is what
+# overrides .gitignore. Repeated here so the index includes the folder.
+!/local/
+!/local/**
+/local/.git/
+/local/notes/*
+!/local/notes/00_overview.md

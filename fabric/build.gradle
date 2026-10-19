@@ -1,0 +1,72 @@
+plugins {
+    id "com.gradleup.shadow" version "9.2.2"
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modImplementation "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}+${rootProject.minecraft_version}-fabric"
+    modCompileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
+    modLocalRuntime "mezz.jei:jei-${rootProject.minecraft_version}-fabric:${rootProject.jei_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    shadowBundle project(path: ":common", configuration: "transformProductionFabric")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mod_id", rootProject.escapedModId
+    inputs.property "mod_name", rootProject.escapedModName
+    inputs.property "mod_description", rootProject.escapedModDescription
+    inputs.property "mod_license", rootProject.escapedModLicense
+    inputs.property "mod_authors", rootProject.fabricModAuthors
+    inputs.property "mod_contributors", rootProject.fabricModContributors
+    inputs.property "mod_homepage", rootProject.escapedModHomepage
+    inputs.property "mod_issues", rootProject.escapedModIssues
+    inputs.property "mod_sources", rootProject.escapedModSources
+    inputs.property "yacl_version", yacl_version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "mod_id": rootProject.escapedModId,
+                "mod_name": rootProject.escapedModName,
+                "mod_description": rootProject.escapedModDescription,
+                "mod_license": rootProject.escapedModLicense,
+                "mod_authors": rootProject.fabricModAuthors,
+                "mod_contributors": rootProject.fabricModContributors,
+                "mod_homepage": rootProject.escapedModHomepage,
+                "mod_issues": rootProject.escapedModIssues,
+                "mod_sources": rootProject.escapedModSources,
+                "yacl_version": yacl_version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}

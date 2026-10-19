@@ -1,0 +1,25 @@
+name: ✨ Feature
+description: Something you want the book to do.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you ask
+      options:
+        - label: I checked the [roadmap](https://github.com/PhoenixIV/Blue-Recipe-Book#roadmap--changelog) and the [planned features](https://github.com/PhoenixIV/Blue-Recipe-Book#-planned-features), and this is not already listed.
+          required: true
+        - label: I searched the [issues](https://github.com/PhoenixIV/tmp_test/issues?q=is%3Aissue%20label%3Aenhancement) and this is not already there.
+          required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should the book do, and what is hard to do without it?
+      placeholder: |
+        What should it do?
+        What is hard to do without it?
+    validations:
+      required: true

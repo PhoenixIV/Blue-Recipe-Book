@@ -1,0 +1,35 @@
+# Local snapshots of other projects, for lookup only.
+# tools/pull_references.py writes this directory. Missing? Run it from the repo root.
+/references/
+
+# Development machine specific notes, helpers...
+#
+# If available:
+#     - Build process calls /local/build.local.cmd
+#     - /tools/pull_references.py includes local/reference_sources.py
+/local/
+
+# Generated. Unanchored so each subproject is covered.
+# Cursor indexes git-visible files, so this stays out of the index.
+# Do not un-ignore build/reports/: regenerated HTML, not code.
+.gradle/
+build/
+run/
+runs/
+out/
+bin/
+
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.launch
+
+/.vscode/**
+!/.vscode/tasks.json
+
+/.cursor/plans/
+*.mdc.disabled
+
+*.code-workspace
