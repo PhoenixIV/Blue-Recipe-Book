@@ -31,7 +31,7 @@ Read this section every session. The sections below are rules, to open when thei
 - **Dev mode**: the JVM flag `-Dbluerecipebook.devToggle=true`, which adds development-only controls.
 
 **Every session.**
-- Build with `.\build.cmd`. `:neoforge:compileJava` does not update the jar the game loads. The jar is `neoforge/build/libs/bluerecipebook-neoforge-0.1.0.jar`.
+- Build with `.\build.cmd`. `:neoforge:compileJava` does not update the jar the game loads. The jar is `neoforge/build/libs/bluerecipebook-neoforge-<mod_version>+mc<minecraft_version>.jar`.
 - The user starts Minecraft and checks the behavior. The agent does not start the game, and no game launcher is installed by this project.
 - Before a mechanic change, open the matching note. Before reading an API, open `references/OVERVIEW.md`.
 - The game is 1.21.1. A later version is planned and out of scope. Do not open `notes/multi-version.md` while writing 1.21.1 code. A rename the compiler will list is cheaper to apply then.

@@ -49,6 +49,11 @@ subprojects {
         archivesName = "${rootProject.mod_id}-${project.name}"
     }
 
+    // File name only. project.version stays the mod version in the loader metadata and the release tag.
+    tasks.withType(AbstractArchiveTask).configureEach {
+        archiveVersion.set("${rootProject.mod_version}+mc${rootProject.minecraft_version}")
+    }
+
     loom {
         silentMojangMappingsLicense()
     }
