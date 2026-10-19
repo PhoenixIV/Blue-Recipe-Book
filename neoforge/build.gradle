@@ -83,8 +83,7 @@ def githubToken = providers.environmentVariable("GITHUB_TOKEN")
 
 publishMods {
     file = remapJar.archiveFile
-    changelog = providers.environmentVariable("RELEASE_CHANGELOG")
-            .orElse("${rootProject.mod_name} ${project.version} for Minecraft ${rootProject.minecraft_version}.")
+    changelog = rootProject.file("release-notes.md").text
     type = ALPHA
     displayName = "${rootProject.mod_name} ${project.version}"
     modLoaders.add("neoforge")
