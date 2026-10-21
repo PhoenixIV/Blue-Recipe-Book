@@ -1,4 +1,5 @@
 """Pull reference sources into references/sources/ and write references/OVERVIEW.md.
+Nothing is copied into the mod.
 
 Run from the repo root:
 
@@ -10,8 +11,9 @@ Run from the repo root:
 references/ is gitignored. The overview is rewritten on every run, so a missing
 file means this script has not run yet.
 
-If local/reference_sources.py exists, its EXTRA_SOURCES, EXTRA_WATCH, and
-EXTRA_SKIPPED are appended. Nothing pulled here is copied into the mod.
+If local/reference_sources.py exists, EXTRA_SOURCES are pulled with the
+public catalogue, and EXTRA_WATCH and EXTRA_SKIPPED are recorded with it.
+The overview puts those entries in their own sections.
 
 Minecraft is not published as Java source, so those trees are built here.
 minecraft-<version>-neoforge is the decompile this mod compiles against, at the
@@ -207,9 +209,10 @@ PUBLIC_SKIPPED: tuple[tuple[str, str], ...] = (
 )
 
 _local = load_local_catalogue()
-SOURCES: tuple[Source, ...] = PUBLIC_SOURCES + tuple(_local.get("EXTRA_SOURCES", ()))
-WATCH: tuple[Watched, ...] = PUBLIC_WATCH + tuple(_local.get("EXTRA_WATCH", ()))
-SKIPPED: tuple[tuple[str, str], ...] = PUBLIC_SKIPPED + tuple(_local.get("EXTRA_SKIPPED", ()))
+LOCAL_SOURCES: tuple[Source, ...] = tuple(_local.get("EXTRA_SOURCES", ()))
+LOCAL_WATCH: tuple[Watched, ...] = tuple(_local.get("EXTRA_WATCH", ()))
+LOCAL_SKIPPED: tuple[tuple[str, str], ...] = tuple(_local.get("EXTRA_SKIPPED", ()))
+SOURCES: tuple[Source, ...] = PUBLIC_SOURCES + LOCAL_SOURCES
 
 MINECRAFT_SLUG = "minecraft"
 STAMP_NAME = "STAMP.txt"
@@ -929,35 +932,8 @@ def minecraft_section(trees: dict[str, TreeResult]) -> list[str]:
     return lines
 
 
-def write_overview(results: list[PullResult], trees: dict[str, TreeResult]) -> None:
-    pulled_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    compile_version = trees["compile"].spec.minecraft_version
-    version_line = f"This mod compiles against Minecraft {compile_version}."
-    if "lookup" in trees:
-        version_line += (
-            f" Minecraft {trees['lookup'].spec.minecraft_version} is a second decompile "
-            "for a future port, not for feature work."
-        )
-
-    lines: list[str] = [
-        "# Reference snapshots",
-        "",
-        "Local copies of other projects, for lookup while building this mod.",
-        "Read this file first. Open a path below only when you need that API or that mod's approach.",
-        "",
-        "`references/` is gitignored. This file is written by "
-        "`py tools/pull_references.py`. If it is missing, run that from the repo root.",
-        "",
-        f"Last pull: {pulled_at}. Refresh with `py tools/pull_references.py`.",
-        "",
-        "These copies are not dependencies and are not vendored into the mod.",
-        version_line,
-        "",
-        *minecraft_section(trees),
-        "## Pulled",
-        "",
-    ]
-
+def pulled_entries(results: list[PullResult]) -> list[str]:
+    lines: list[str] = []
     for result in results:
         source = result.source
         lines += [
@@ -985,22 +961,74 @@ def write_overview(results: list[PullResult], trees: dict[str, TreeResult]) -> N
             lines.append("- Expected paths that were not in this checkout:")
             lines += [f"  - `{hint}`" for hint in result.start_here_missing]
         lines.append("")
+    return lines
 
-    if WATCH:
-        lines += [
-            "## Watch",
-            "",
-            "Related projects that stay on the web. They are not cloned.",
-            "Look again only if the question named here comes up.",
-            "",
-        ]
-        for watched in WATCH:
-            lines += [f"### {watched.title}", "", watched.why, "", f"- Remote: {web_url(watched.url)}", ""]
 
-    if SKIPPED:
-        lines += ["## Not pulled", ""]
-        for title, reason in SKIPPED:
-            lines += [f"### {title}", "", reason, ""]
+def watch_entries(watched: tuple[Watched, ...]) -> list[str]:
+    lines: list[str] = []
+    for item in watched:
+        lines += [f"### {item.title}", "", item.why, "", f"- Remote: {web_url(item.url)}", ""]
+    return lines
+
+
+def skipped_entries(skipped: tuple[tuple[str, str], ...]) -> list[str]:
+    lines: list[str] = []
+    for title, reason in skipped:
+        lines += [f"### {title}", "", reason, ""]
+    return lines
+
+
+def catalogue_section(heading: str, entries: list[str], lead: tuple[str, ...] = ()) -> list[str]:
+    """Return the heading and entries, or nothing when `entries` is empty."""
+    if not entries:
+        return []
+    lines = [f"## {heading}", ""]
+    if lead:
+        lines += [*lead, ""]
+    return lines + entries
+
+
+def write_overview(results: list[PullResult], trees: dict[str, TreeResult]) -> None:
+    pulled_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    compile_version = trees["compile"].spec.minecraft_version
+    version_line = f"This mod compiles against Minecraft {compile_version}."
+    if "lookup" in trees:
+        version_line += (
+            f" Minecraft {trees['lookup'].spec.minecraft_version} is a second decompile "
+            "for a future port, not for feature work."
+        )
+
+    public_slugs = {source.slug for source in PUBLIC_SOURCES}
+    public_results = [result for result in results if result.source.slug in public_slugs]
+    local_results = [result for result in results if result.source.slug not in public_slugs]
+    watch_lead = (
+        "Related projects that stay on the web. They are not cloned.",
+        "Look again only if the question named here comes up.",
+    )
+    local_note = ("From `local/reference_sources.py`.",)
+
+    lines: list[str] = [
+        "# Reference snapshots",
+        "",
+        "Local copies of other projects, for lookup while building this mod.",
+        "Read this file first. Open a path below only when you need that API or that mod's approach.",
+        "",
+        "`references/` is gitignored. This file is written by "
+        "`py tools/pull_references.py`. If it is missing, run that from the repo root.",
+        "",
+        f"Last pull: {pulled_at}. Refresh with `py tools/pull_references.py`.",
+        "",
+        "These copies are not dependencies and are not vendored into the mod.",
+        version_line,
+        "",
+        *minecraft_section(trees),
+        *catalogue_section("Pulled", pulled_entries(public_results)),
+        *catalogue_section("Watch", watch_entries(PUBLIC_WATCH), watch_lead),
+        *catalogue_section("Not pulled", skipped_entries(PUBLIC_SKIPPED)),
+        *catalogue_section("Local sources", pulled_entries(local_results), local_note),
+        *catalogue_section("Local watch", watch_entries(LOCAL_WATCH), (*local_note, "", *watch_lead)),
+        *catalogue_section("Local not pulled", skipped_entries(LOCAL_SKIPPED), local_note),
+    ]
 
     OVERVIEW_PATH.parent.mkdir(parents=True, exist_ok=True)
     OVERVIEW_PATH.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
