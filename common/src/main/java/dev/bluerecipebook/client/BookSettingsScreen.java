@@ -46,6 +46,12 @@ public final class BookSettingsScreen {
                                         defaults.scrollToMoveItems,
                                         () -> config.scrollToMoveItems,
                                         value -> config.scrollToMoveItems = value))
+                                .option(toggle(
+                                        "openWhereYouLeftOff",
+                                        false,
+                                        defaults.openWhereYouLeftOff,
+                                        () -> config.openWhereYouLeftOff,
+                                        value -> config.openWhereYouLeftOff = value))
                                 .build()))
                 .generateScreen(parent);
     }

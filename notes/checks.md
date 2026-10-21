@@ -12,7 +12,8 @@ Start the game with `-Dbluerecipebook.devToggle=true` for the swap, feed, and de
 - [ ] Open the crafting table. The same button works there.
 - [ ] Press Escape with the book open on a wide screen. The screen closes, and the search box does not keep the key.
 - [ ] Make the window narrower than 379 pixels. The book replaces the screen. A click outside the book does nothing. Escape closes the book and leaves the screen open. Placing a recipe closes the book.
-- [ ] Open the inventory. The blue book is open when this world's vanilla crafting book is open, and closed when it is closed. Close it on a chosen tab and page, then open the inventory again: it stays closed, and the tab and page are as you left them. Leave and rejoin: it stays closed. Open it, leave, and rejoin: it is open. The crafting table follows the same open state. Join another world without restarting the client: the book follows that world's vanilla crafting book. The tab and page stay from this client until it restarts.
+- [ ] Open the inventory. The blue book is open when this world's vanilla crafting book is open, and closed when it is closed. Close it on a chosen tab and page, then open the inventory again: it stays closed, and the book opens on the search tab and the first page. Leave and rejoin: it stays closed. Open it, leave, and rejoin: it is open. The crafting table follows the same open state. Join another world without restarting the client: the book follows that world's vanilla crafting book.
+- [ ] "Open where you left off" is off by default. Turn it on. Close the book on a chosen tab, page, and search text, then open the inventory again: the tab, the page, and the search text are as you left them. The crafting table shows the same place. Quit and relaunch: the option is still on, and the book opens on the search tab, the first page, and an empty search.
 - [ ] Start without the dev property. No swap button appears on the inventory or the crafting table.
 - [ ] Start with the dev property. The corner button swaps to the vanilla book and back, open or closed with the blue book. Both stay loaded. The open blue panel uses the vanilla book texture. Unlocks and placing a recipe stay on the vanilla book. The search box still accepts typing afterward, and the screen draws without an error.
 
@@ -28,7 +29,7 @@ Start the game with `-Dbluerecipebook.devToggle=true` for the swap, feed, and de
 - [ ] Search while the search tab is selected. Recipes on every tab are searched.
 - [ ] Type a word that matches a smelting or stonecutting result, such as charcoal or framed glass, on the crafting table. That recipe does not appear.
 - [ ] Search for a term, then type more characters. The tabs on the left do not change.
-- [ ] Open the inventory or the crafting table again. The search text is cleared.
+- [ ] With "Open where you left off" off, open the inventory or the crafting table again. The search text is cleared. Opening the book clears it too.
 - [ ] Unlock a recipe while a search is active that it matches. It appears in the results.
 - [ ] Press F3+T with the inventory open, then search for a term used before. The names match the new language. This is a known gap, see below.
 

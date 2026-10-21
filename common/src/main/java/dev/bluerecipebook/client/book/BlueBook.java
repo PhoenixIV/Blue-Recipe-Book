@@ -1070,6 +1070,10 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     }
 
     private void resetQuery() {
+        // Opening keeps a search when that option is on. The tab and the page come from BookMemory.
+        if (BookSettings.get().openWhereYouLeftOff) {
+            return;
+        }
         if (this.searchBox != null && !this.searchBox.getValue().isEmpty()) {
             // setValue notifies the responder, which refreshes the page and leaves the unlocked snapshot.
             this.searchBox.setValue("");

@@ -17,6 +17,8 @@
   "gui.bluerecipebook.config.groupRecipes.description": "§aOn:\u00a7r Recipes that share a group share one slot. For example oak planks and birch planks group into wooden planks.\n\n\u00a7cOff:\u00a7r Keeps all items apart. Different recipes that make the same item still share one slot.",
   "gui.bluerecipebook.config.scrollToMoveItems": "Scroll to move items",
   "gui.bluerecipebook.config.scrollToMoveItems.description": "\u00a7cOff:\u00a7r The scroll wheel turns pages.\n\n\u00a7aOn:\u00a7r The scroll wheel places the required ingredients for the selected recipe into the crafting grid (like clicking), or takes them back.\n\n───\n\nHolding §7[ctrl]§r will temporarily invert the selected behavior.\n\nBelow the recipes, where the page navigation is, scrolling always turns pages.\n\n\n§7Turning pages with the scroll wheel is a feature of this mod, not a vanilla behavior.",
+  "gui.bluerecipebook.config.openWhereYouLeftOff": "Open where you left off",
+  "gui.bluerecipebook.config.openWhereYouLeftOff.description": "\u00a7cOff:\u00a7r The book opens on the search tab, the first page, and an empty search.\n\n\u00a7aOn:\u00a7r The book opens on the tab, page, and search text you left.",
   "gui.bluerecipebook.group.choose": "Click to choose a type",
   "gui.bluerecipebook.order.craftable_first": "Craftable recipes first",
   "gui.bluerecipebook.order.newest_first": "Newest recipes first",

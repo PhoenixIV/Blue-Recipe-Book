@@ -4,7 +4,7 @@ The blue panel: how search and tabs filter it, how it sits beside the screen, an
 
 ## Search and tabs
 
-Search is a text filter on the current group, and a compass tab. It is not a category. Opening the inventory, the crafting table, or the book clears the search text. Ctrl+F on a book that is already open selects the current text.
+Search is a text filter on the current group, and a compass tab. It is not a category. "Open where you left off" is off by default. Opening the inventory, the crafting table, or the book then clears the search text, and the next screen opens on the search tab and the first page. On, the tab, the page, and the search text stay for this client session. The inventory and the crafting table share them. Quitting the game clears that place and leaves the option on. Ctrl+F on a book that is already open selects the current text.
 
 The search tab lists the crafting recipes that fit this station, from every crafting tab. A smelting or stonecutting recipe stays off this book. While the search box has text, a slot holds only members whose result name contains it: [Group icon](group-icon.md).
 

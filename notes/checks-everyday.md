@@ -17,6 +17,7 @@ Start with `-Dbluerecipebook.devToggle=true` for the swap, the feed, and Unlock,
 
 - [ ] With the inventory open and the book closed, Ctrl+F opens the book and focuses the search box. Text already there is selected. The same keys in the world do nothing.
 - [ ] On a category tab, search filters that category. The compass tab searches every crafting tab, and a smelting or stonecutting result does not appear. A category tab appears only when that station has an unlocked crafting recipe in the group. The inventory lists 2×2 recipes and the crafting table lists 3×3.
+- [ ] "Open where you left off" is off. A tab, a page, and a search are gone when the inventory opens again. Turn it on and they come back, on the crafting table too. Quit and relaunch: the option stays on and that place starts over.
 
 ## Groups
 

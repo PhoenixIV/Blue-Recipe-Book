@@ -41,6 +41,14 @@ public class BookSettings {
     public boolean scrollToMoveItems = false;
 
     /**
+     * The tab, the page, and the search text from the last time the book was open.
+     * Off opens on the search tab, the first page, and an empty search, as vanilla does.
+     * The inventory and the crafting table share the place. It lasts for this client session.
+     */
+    @SerialEntry
+    public boolean openWhereYouLeftOff = false;
+
+    /**
      * Craftable-first ordering, where craftable recipes come first and the rest follow newest first. Off keeps only
      * the newest order. The button in the book's top right sets this, so the settings screen leaves it out.
      */

@@ -6,7 +6,7 @@ How the blue book shares a screen with Minecraft's recipe book. The mod hides va
 
 The blue book is open when `RecipeBook.isOpen(RecipeBookType.CRAFTING)` is true. The inventory and the crafting table share that flag. The server stores it on the player. A recipe packet replaces the whole settings object, so the client follows the server's copy.
 
-Opening or closing the blue book calls vanilla `setVisible` through the invoker `blueRecipeBook$applyOpen`. That writes the flag and sends `ServerboundRecipeBookChangeSettingsPacket`. The tab and the page stay in this client's session. They are not part of that flag.
+Opening or closing the blue book calls vanilla `setVisible` through the invoker `blueRecipeBook$applyOpen`. That writes the flag and sends `ServerboundRecipeBookChangeSettingsPacket`. The tab, the page, and the search text are not part of that flag. With "Open where you left off" on, they stay in this client's session. Off, the next screen opens on the search tab, the first page, and an empty search.
 
 ## Hiding
 
