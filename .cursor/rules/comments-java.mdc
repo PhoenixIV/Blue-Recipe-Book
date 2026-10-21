@@ -8,7 +8,7 @@ alwaysApply: false
 
 Write no comment by default. Write one only when the reader would otherwise miss something the code and names cannot say: a reason, a trap, or a contract. If deleting it would not confuse the next reader, leave it out.
 
-- Keep a comment to three sentences, tags aside. A longer reason goes in the project's notes, not in `AGENTS.md`.
+- Keep a comment short, tags aside.
 - Do not describe what a line or block does. Rename or extract a method instead.
 - Do not repeat a member's name or signature in its doc.
 - Do not say where code is used, which task added it, or what it replaced. That goes stale.

@@ -1,6 +1,6 @@
 # Vanilla book
 
-How the blue book shares a screen with Minecraft's recipe book. The mod hides vanilla's widgets, draws over them, and takes input first. What the blue panel itself does: [Blue book](blue-book.md). The short rules are in `AGENTS.md`.
+How the blue book shares a screen with Minecraft's recipe book. The mod hides vanilla's widgets, draws over them, and takes input first. What the blue panel itself does: [Blue book](blue-book.md).
 
 ## Hiding
 

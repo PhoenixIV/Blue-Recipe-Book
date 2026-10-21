@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface RecipeBookComponentAccess {
     /**
      * Writes the field and nothing else.
-     * The vanilla {@code setVisible} also builds the search box, saves the open state, and sends a packet.
+     * The vanilla {@code setVisible} would also build the search box, save the open state, and send a packet. Not what we want.
      * An accessor named {@code setVisible} would replace that method, hence the prefix.
      */
     @Accessor("visible")

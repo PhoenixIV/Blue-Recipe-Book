@@ -39,6 +39,8 @@ allprojects {
 }
 
 subprojects {
+    // Loom reads this as the plugin is applied. The NeoForge build script runs after this block, so a property set there is too late.
+    // Without it the neoForge configuration does not exist, and the Maven coordinate is a POM with no @Mod class.
     if (name == "neoforge") {
         ext["loom.platform"] = "neoforge"
     }

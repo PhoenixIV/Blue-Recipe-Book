@@ -32,7 +32,7 @@ public class RecipeBookComponentMixin {
             return;
         }
         // The vanilla tooltip returns while the book is hidden, which also skips the name on a missing ingredient.
-        // The ghost itself still draws.
+        // Ghost rendering is a separate call and stays. Cancelling it would remove the preview from the grid.
         this.renderGhostRecipeTooltip(graphics, left, top, mouseX, mouseY);
     }
 }
