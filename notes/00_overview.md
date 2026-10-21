@@ -16,7 +16,7 @@ How the book behaves, for topics the maintainer chose to write up. When a change
 - [Group icon](group-icon.md) — the front icon walks the craftable members, and a click places the one showing
 - [Locked ghost](locked-ghost.md) — a recipe the player has not unlocked is drawn as a ghost on this client
 - [Blue book](blue-book.md) — the blue panel's search, tabs, wheel, sizing, and button
-- [Vanilla book](vanilla-book.md) — how the blue book shares a screen with vanilla's recipe book: hiding, ghosts, focus, and clicks
+- [Vanilla book](vanilla-book.md) — how the blue book shares a screen with vanilla's recipe book: hiding, the open state, ghosts, focus, and clicks
 - [Ctrl in the vanilla book](ctrl-in-vanilla-book.md) — Ctrl freezes the cycling recipe icon; this book's Ctrl+click opens that result in JEI
 - [Development mode](dev-mode.md) — the JVM argument that shows the swap button and the other development controls
 - [Checks](checks.md) — what the build does, written as what to check, in the game or in the files. Game tests never open this screen

@@ -2,6 +2,7 @@ package dev.bluerecipebook.client.book;
 
 import dev.bluerecipebook.client.BookMemory;
 import dev.bluerecipebook.client.BookSettings;
+import dev.bluerecipebook.client.DevBooks;
 import dev.bluerecipebook.client.category.BookCategories;
 import dev.bluerecipebook.client.category.BookCategory;
 import dev.bluerecipebook.client.discover.DiscoveryOrder;
@@ -40,6 +41,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.RecipeBookMenu;
+import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -47,7 +49,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-/** The blue book panel the player sees. Unlock flags and grid placement stay on the vanilla book. */
+/** The blue book panel the player sees. Unlock flags, the open state, and grid placement stay on the vanilla book. */
 public final class BlueBook implements GuiEventListener, NarratableEntry {
     private static final ResourceLocation BOOK_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private static final ResourceLocation TAB = ResourceLocation.withDefaultNamespace("recipe_book/tab");
@@ -115,7 +117,8 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     private EditBox searchBox;
     private BookCategory category = BookCategories.byId(BookMemory.categoryId());
     private boolean searchGroup = BookMemory.searchGroup();
-    private boolean open = BookMemory.open();
+    /** Open flag last seen from the vanilla crafting book, so a later packet can move the screen. */
+    private boolean seenOpen;
     private boolean shown = true;
     private boolean focusSearch;
     private boolean narrow;
@@ -150,11 +153,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         this.menu = menu;
         this.vanillaBook = vanillaBook;
         this.station = station;
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null) {
-            BookMemory.prepare(minecraft.player.getRecipeBook());
-        }
-        this.open = BookMemory.open();
+        this.seenOpen = this.isOpen();
         this.searchGroup = BookMemory.searchGroup();
         BookCategory selected = BookCategories.byId(BookMemory.categoryId());
         this.category = selected == null ? BookCategories.all().getFirst() : selected;
@@ -178,14 +177,16 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         }
     }
 
+    /** Returns the vanilla crafting book's saved open state. The server stores that flag. */
     public boolean isOpen() {
-        return this.open;
+        Minecraft minecraft = Minecraft.getInstance();
+        return minecraft.player != null && minecraft.player.getRecipeBook().isOpen(RecipeBookType.CRAFTING);
     }
 
     public void toggleOpen() {
-        this.open = !this.open;
-        BookMemory.setOpen(this.open);
-        if (this.open) {
+        boolean open = !this.isOpen();
+        this.publishOpen(open);
+        if (open) {
             this.resetQuery();
         } else {
             this.dismissLightboxes();
@@ -194,12 +195,46 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     }
 
     public void openAndFocusSearch() {
-        if (!this.open) {
+        if (!this.isOpen()) {
             this.resetQuery();
         }
-        this.open = true;
-        BookMemory.setOpen(true);
+        this.publishOpen(true);
         this.focusSearch = true;
+    }
+
+    /**
+     * Saves {@code open} on the vanilla crafting book and sends it to the server.
+     * The vanilla widgets stay hidden while the blue book is showing. The saved flag stays.
+     */
+    private void publishOpen(boolean open) {
+        if (this.isOpen() == open) {
+            this.seenOpen = open;
+            return;
+        }
+        if (this.vanillaBook != null) {
+            RecipeBookComponentAccess access = (RecipeBookComponentAccess) (Object) this.vanillaBook;
+            access.blueRecipeBook$applyOpen(open);
+            if (DevBooks.showBlue()) {
+                access.blueRecipeBook$setVisible(false);
+            }
+        }
+        this.seenOpen = this.isOpen();
+    }
+
+    /** Moves the screen when a recipe packet replaces the saved open flag. */
+    private void followOpen() {
+        boolean open = this.isOpen();
+        if (open == this.seenOpen) {
+            return;
+        }
+        this.seenOpen = open;
+        if (!open) {
+            this.dismissLightboxes();
+            this.unfocusSearch();
+        } else if (this.shown) {
+            this.resetQuery();
+        }
+        this.afterChange.run();
     }
 
     public void unfocusSearch() {
@@ -290,6 +325,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         if (!this.focused) {
             this.unfocusSearch();
         }
+        this.followOpen();
         if (!this.shown || this.menu == null) {
             return;
         }
@@ -327,7 +363,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.tooltip = List.of();
-        if (!this.shown || !this.open) {
+        if (!this.shown || !this.isOpen()) {
             return;
         }
         // The world tick stops while this screen is open, so the icon advances from render time.
@@ -367,7 +403,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     }
 
     public void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
-        if (!this.shown || !this.open || this.tooltip.isEmpty()) {
+        if (!this.shown || !this.isOpen() || this.tooltip.isEmpty()) {
             return;
         }
         // A tooltip is drawn above the topmost lightbox. Each lightbox sits LAYER_STEP above the one below it.
@@ -425,13 +461,13 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         } else {
             RecipeHolder<?> chosen = GroupOrder.cellRecipe(recipes, this.craftable, this.groupRecipes);
             this.placeIfPossible(chosen);
-            if (this.open) {
+            if (this.isOpen()) {
                 box.setOpenCell(cell);
                 this.pushLightbox(true, singles(recipes), box.cellX(cell), box.cellY(cell));
             }
         }
         // A narrow screen closes the book when a recipe is placed. The lightboxes close with it.
-        if (!this.open) {
+        if (!this.isOpen()) {
             this.dismissLightboxes();
         }
     }
@@ -494,7 +530,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!this.shown || !this.open) {
+        if (!this.shown || !this.isOpen()) {
             return false;
         }
         if (this.interceptClick(mouseX, mouseY, button)) {
@@ -555,7 +591,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
-        if (!this.shown || !this.open || this.searchBox == null || !this.searchBox.isFocused()) {
+        if (!this.shown || !this.isOpen() || this.searchBox == null || !this.searchBox.isFocused()) {
             return false;
         }
         this.searchBox.keyPressed(key, scan, modifiers);
@@ -565,7 +601,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     @Override
     public boolean charTyped(char character, int modifiers) {
-        if (!this.shown || !this.open || this.searchBox == null || !this.searchBox.isFocused()) {
+        if (!this.shown || !this.isOpen() || this.searchBox == null || !this.searchBox.isFocused()) {
             return false;
         }
         return this.searchBox.charTyped(character, modifiers);
@@ -584,7 +620,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        if (!this.shown || !this.open) {
+        if (!this.shown || !this.isOpen()) {
             return false;
         }
         if (this.anyLightboxContains(mouseX, mouseY)) {
@@ -834,7 +870,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         }
         if (members.size() > 1) {
             this.placeIfPossible(order.front());
-            if (this.open) {
+            if (this.isOpen()) {
                 this.openPage(slot, order);
             }
             return;
@@ -963,8 +999,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         LastGroupUse.remember(RecipeGroup.key(holder, this.groupRecipes), holder.id());
         minecraft.player.removeRecipeHighlight(holder);
         if (closeNarrow && this.narrow) {
-            this.open = false;
-            BookMemory.setOpen(false);
+            this.publishOpen(false);
             this.unfocusSearch();
             this.afterChange.run();
         }

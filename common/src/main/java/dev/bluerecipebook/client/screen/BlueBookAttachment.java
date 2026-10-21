@@ -5,14 +5,11 @@ import dev.bluerecipebook.client.book.BlueBook;
 import dev.bluerecipebook.client.screen.mixin.RecipeBookComponentAccess;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
-import net.minecraft.stats.RecipeBook;
-import net.minecraft.world.inventory.RecipeBookType;
 import org.lwjgl.glfw.GLFW;
 
 /** Book widgets for one inventory or crafting screen. */
@@ -48,14 +45,18 @@ public final class BlueBookAttachment {
         boolean showBlue = DevBooks.showBlue();
         RecipeBookComponent vanilla = this.book.vanillaBook();
         RecipeBookComponentAccess access = (RecipeBookComponentAccess) (Object) vanilla;
-        // The accessor writes the field. setVisible saves the open state and sends a packet.
+        // The field only. setVisible would save the open state and send it to the server.
         int left;
         if (showBlue) {
             access.blueRecipeBook$setVisible(false);
             left = BookLayout.screenLeft(screenWidth, imageWidth, this.book.isOpen(), narrow);
         } else {
-            RecipeBook saved = Minecraft.getInstance().player.getRecipeBook();
-            access.blueRecipeBook$setVisible(saved.isOpen(RecipeBookType.CRAFTING));
+            boolean open = this.book.isOpen();
+            // init() skips initVisuals when the book starts closed. Rendering then crashes on a null search box.
+            if (open && access.searchBox() == null) {
+                vanilla.initVisuals();
+            }
+            access.blueRecipeBook$setVisible(open);
             left = vanilla.updateScreenPosition(screenWidth, imageWidth);
         }
         setLeft.accept(left);

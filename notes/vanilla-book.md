@@ -2,13 +2,19 @@
 
 How the blue book shares a screen with Minecraft's recipe book. The mod hides vanilla's widgets, draws over them, and takes input first. What the blue panel itself does: [Blue book](blue-book.md).
 
+## Open state
+
+The blue book is open when `RecipeBook.isOpen(RecipeBookType.CRAFTING)` is true. The inventory and the crafting table share that flag. The server stores it on the player. A recipe packet replaces the whole settings object, so the client follows the server's copy.
+
+Opening or closing the blue book calls vanilla `setVisible` through the invoker `blueRecipeBook$applyOpen`. That writes the flag and sends `ServerboundRecipeBookChangeSettingsPacket`. The tab and the page stay in this client's session. They are not part of that flag.
+
 ## Hiding
 
-Hide the vanilla book by setting its `visible` field. `setVisible` and `toggleVisibility` write the saved open state and send a packet, so they are not used. The accessor that writes `visible` is `blueRecipeBook$setVisible`. Naming it `setVisible` makes Mixin replace the vanilla method.
+The vanilla widgets stay hidden. `setVisible` also sets the `visible` field, so after that call, and on each layout while the blue book is showing, the accessor `blueRecipeBook$setVisible` writes the field false and leaves the saved flag alone. Naming the accessor `setVisible` would make Mixin replace the vanilla method.
 
-The vanilla method calls `initVisuals()`, which creates the search box. `init()` skips `initVisuals()` when the book starts closed. A furnace, smoker, or blast furnace then renders with the book visible and a null search box.
+`setVisible(true)` calls `initVisuals()`, which creates the search box. `init()` skips `initVisuals()` when the book starts closed. Rendering with `visible` true and a null search box crashes. The field is set true only when the dev controls show the vanilla book, and only after `initVisuals` if the search box is still null. A furnace, smoker, or blast furnace is not a screen this mod owns, and each keeps its own open flag.
 
-`tick()` restores the saved state, so cancel it only on screens this mod owns.
+`tick()` writes the saved flag back into `visible`, which would show the vanilla book. Cancel it only on screens this mod owns. While that tick is cancelled, the blue book reads the saved flag on its own tick, so a recipe packet that changes the flag still opens or closes the panel and moves the screen.
 
 ## Ghosts
 

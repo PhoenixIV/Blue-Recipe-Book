@@ -9,6 +9,10 @@ The short pass after a change. The full checklist stays in [Checks](checks.md), 
 
 Start with `-Dbluerecipebook.devToggle=true` for the swap, the feed, and Unlock, Reset, and Options. Use a dev world and `/recipe give @s *` to unlock recipes quickly.
 
+## Opening
+
+- [ ] Close the book, leave the world, and rejoin. It stays closed. Open it and rejoin: it is open. The crafting table matches. Another world follows that world's vanilla crafting book.
+
 ## Search and tabs
 
 - [ ] With the inventory open and the book closed, Ctrl+F opens the book and focuses the search box. Text already there is selected. The same keys in the world do nothing.
@@ -38,6 +42,6 @@ Start with `-Dbluerecipebook.devToggle=true` for the swap, the feed, and Unlock,
 
 ## Development
 
-- [ ] The corner button swaps to the vanilla book and back. Both stay loaded, and the blue panel uses the vanilla book texture. The search box still accepts typing afterward.
+- [ ] The corner button swaps to the vanilla book and back, open or closed with the blue book. Both stay loaded, and the blue panel uses the vanilla book texture. The search box still accepts typing afterward.
 - [ ] Unlock grants recipes through the server. Reset takes them and leaves the discovery files empty. Options opens the config screen, and the file is `config/bluerecipebook.json`.
 - [ ] Feed opens its list. Click any one sequence and let it run. Start another before it finishes: the first stops and the second runs. Escape closes the list.

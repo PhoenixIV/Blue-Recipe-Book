@@ -12,9 +12,9 @@ Start the game with `-Dbluerecipebook.devToggle=true` for the swap, feed, and de
 - [ ] Open the crafting table. The same button works there.
 - [ ] Press Escape with the book open on a wide screen. The screen closes, and the search box does not keep the key.
 - [ ] Make the window narrower than 379 pixels. The book replaces the screen. A click outside the book does nothing. Escape closes the book and leaves the screen open. Placing a recipe closes the book.
-- [ ] The first time this client prepares the book, it opens if the vanilla crafting book was open. Close it on a chosen tab and page, then open the inventory again: the book, the tab, and the page are as you left them. Join another world without restarting the client: it does not seed from that world's vanilla book. Restart the client and the open state follows the vanilla crafting book again.
+- [ ] Open the inventory. The blue book is open when this world's vanilla crafting book is open, and closed when it is closed. Close it on a chosen tab and page, then open the inventory again: it stays closed, and the tab and page are as you left them. Leave and rejoin: it stays closed. Open it, leave, and rejoin: it is open. The crafting table follows the same open state. Join another world without restarting the client: the book follows that world's vanilla crafting book. The tab and page stay from this client until it restarts.
 - [ ] Start without the dev property. No swap button appears on the inventory or the crafting table.
-- [ ] Start with the dev property. The corner button swaps to the vanilla book and back. Both stay loaded. The open blue panel uses the vanilla book texture. Unlocks and placing a recipe stay on the vanilla book. The search box still accepts typing afterward, and the screen draws without an error.
+- [ ] Start with the dev property. The corner button swaps to the vanilla book and back, open or closed with the blue book. Both stay loaded. The open blue panel uses the vanilla book texture. Unlocks and placing a recipe stay on the vanilla book. The search box still accepts typing afterward, and the screen draws without an error.
 
 ## Search
 
