@@ -4,9 +4,11 @@ Knowledge base for Blue Recipe Book, and a resource agents may read when a topic
 
 Each note sits in one group. The group says how to use it. Images for a topic go in `images/` and are linked from that topic.
 
+Notes are optional. The maintainer writes a note for a topic they want to read up on without opening code. A behavior without a note is not a gap.
+
 ## Behavior
 
-What the build does. A note here changes together with `checks.md` when the behavior changes.
+How the book behaves, for topics the maintainer chose to write up. When a change makes a note wrong, agents fix that note in the same change and update the matching line in `checks.md`.
 
 - [Recipe order](recipe-order.md) — vanilla groups slots by encounter order; this book sorts unlocked recipes newest first
 - [Player data](player-data.md) — per-player files in the local save, and under `remote/` for a server, a LAN world, or a realm

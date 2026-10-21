@@ -20,6 +20,10 @@ Escape and Ctrl+F are handled at the start of the screen's key press, before the
 
 Ctrl+F focuses the search box in `layout()`, after `screen.setFocused`. A screen blurs the current widget and then focuses the target, even when both are the blue book, so a focus set earlier would be undone. `BlueBook.setFocused(false)` must leave the search box alone. The vanilla search box still draws its selection while unfocused, so a dropped focus looks selected and the next character does nothing. Why there is no global Ctrl+F: [No global Ctrl+F](no-global-ctrl-f.md).
 
+## Tabs
+
+Vanilla shows a side tab when some known recipe in its category fits the grid. `RecipeBookTabButton.updateVisibility` reads `hasKnownRecipes` and `hasFitting`, and a recipe counts as fitting when `canCraftInDimensions` holds for the grid size. The blue book's category tabs use that same test on the recipes it has unlocked for the station. Two settings make the blue book differ from vanilla. Strict discovery can hide a tab that vanilla shows, because it hides a recipe until its ingredients are held. Reveal-all lists every recipe, so it can show a tab that vanilla would hide. The search tab is always shown, as in vanilla.
+
 ## Clicks
 
 The screen's `mouseClicked` injection runs `BookHooks.interceptClick` before vanilla handles the click. A click that the injection passes on reaches the blue book widget, which is registered as an event widget. The widget checks the lightboxes again, and that check finds nothing, because the injection has already dismissed them. Then the widget handles the click on its page.
