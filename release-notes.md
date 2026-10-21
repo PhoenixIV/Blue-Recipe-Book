@@ -1,6 +1,7 @@
 - New setting: "Open where you left off"
     - `On` remembers the tab, the page, and the search text where you left off.
     - `Off` opens on the search tab, the first page, and an empty search (Vanilla behavior, default).
-- Blue Recipe Book stores its opened / closed state like vanilla:
+- Store the book's opened / closed state across sessions like vanilla:
+    - Opening / closing the book in the inventory keeps it open / closed the next time you enter the world.
     - Per player, per world.
-    - Is synced with the vanilla server.
+    - Is synced with the vanilla server & book.
