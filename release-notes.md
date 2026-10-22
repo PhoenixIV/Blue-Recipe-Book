@@ -5,3 +5,6 @@
     - Opening / closing the book in the inventory keeps it open / closed the next time you enter the world.
     - Per player, per world.
     - Is synced with the vanilla server & book.
+- Match vanilla's "new recipe" bouncing animation in the book
+    - Receiving a new recipe will bounce the slot and tabs it is in
+    - Fixes a sequencing bug of the vanilla book where tabs are not bouncing when the book is already open

@@ -24,7 +24,7 @@ public final class RecipeGroup {
                 return "group\0" + group;
             }
         }
-        ResourceLocation result = resultItem(holder);
+        ResourceLocation result = resultId(holder);
         return result == null ? holder.id().toString() : "result\0" + result;
     }
 
@@ -43,7 +43,7 @@ public final class RecipeGroup {
     }
 
     /** Returns the item this recipe makes, or null when the result is empty. */
-    private static ResourceLocation resultItem(RecipeHolder<?> holder) {
+    public static ResourceLocation resultId(RecipeHolder<?> holder) {
         ItemStack stack = result(holder);
         return stack.isEmpty() ? null : BuiltInRegistries.ITEM.getKey(stack.getItem());
     }

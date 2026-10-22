@@ -67,12 +67,13 @@ Start the game with `-Dbluerecipebook.devToggle=true` for the swap, feed, and de
 
 ## Discovery
 
-- [ ] With the top-right button on (the default), unlock a recipe you can craft. It appears in front of the page, ahead of recipes you cannot craft.
+- [ ] With the top-right button on (the default), unlock a recipe you can craft. It appears in front of the page, ahead of recipes you cannot craft. Its slot grows and shrinks once, and its category tab stretches vertically once. The search tab stays still.
+- [ ] Close the book, unlock another recipe, and open the book. That slot and its category tab do the same. Leave the world and rejoin, then open the book: recipes already known stay still. With one red stained glass recipe on the page, unlock the other: the slot pops once. Turn on "Reveal all recipes": locked recipes appear and do not pop. Turn strict discovery off: a recipe it was hiding appears and does not pop.
 - [ ] Click the top-right button. The sprite changes, the tooltip reads "Newest recipes first", and the page returns to newest first. Click again to return to "Craftable recipes first". An open lightbox closes, and the book shows the first page.
 - [ ] Turn the button off, unlock a recipe, then look at the page. It appears first, as before.
 - [ ] With the button on, craft an item while a lightbox is open. The slot can move onto another page. The lightbox stays, and the page follows it.
 - [ ] Open a lightbox on a later page, then unlock a recipe that sorts ahead of that slot. The lightbox stays open, the page turns to that slot, and the popup does not move. The same holds with strict discovery on.
-- [ ] Open the plank group, then give yourself another plank type. The new plank appears in the popup, and the popup may move. With an alternative recipes popup open on one of those planks, that popup stays and shows that plank's recipes.
+- [ ] Open the plank group, then give yourself another plank type. The new plank appears in the popup, that cell pops, and the group slot still pops. The popup may move. With an alternative recipes popup open on one of those planks, that popup stays and shows that plank's recipes.
 - [ ] The button does not hide recipes. A recipe you cannot craft still appears on the page.
 - [ ] Restart the game. The button keeps its last state.
 - [ ] The settings screen has no entry for the order.
@@ -118,4 +119,4 @@ A line above is the part to check. These notes hold the rest of the same behavio
 - How a server address, a LAN name, and a realm id become a folder, including the encoding: [Player data](player-data.md).
 - Discovery order, held items, and strict discovery, including the dedicated-server half that is not built: [Recipe order](recipe-order.md).
 - How the vanilla book stays hidden, and the rules for its ghost and its search box: [Vanilla book](vanilla-book.md).
-- How search, tabs, the wheel, the narrow layout, and the button work: [Blue book](blue-book.md).
+- How search, tabs, the wheel, the narrow layout, the button, and the arrival pop work: [Blue book](blue-book.md).

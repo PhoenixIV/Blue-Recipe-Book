@@ -33,7 +33,8 @@ Start with `-Dbluerecipebook.devToggle=true` for the swap, the feed, and Unlock,
 
 ## Discovery
 
-- [ ] Craftable-first is the default. An unlock you can craft appears ahead of ones you cannot, and recipes you cannot craft stay on the page. Switch to newest-first and an unlock appears first. Clicking the button closes an open lightbox and shows the first page. The button keeps its last state after a restart.
+- [ ] Craftable-first is the default. An unlock you can craft appears ahead of ones you cannot, and recipes you cannot craft stay on the page. The slot pops once, and its tab stretches once. The search tab stays still. With a group lightbox open, a new item in that group pops in the popup as well. Switch to newest-first and an unlock appears first. Clicking the button closes an open lightbox and shows the first page. The button keeps its last state after a restart.
+- [ ] Close the book, unlock a recipe, and open it. That slot pops too. Rejoin: recipes already known stay still.
 - [ ] With craftable-first on, craft while the book is open. The slot can move. An open lightbox stays.
 - [ ] `/recipe take @s <recipe id>` removes that recipe from the open page, including one granted before the mod ran in that world. An unlock that matches the current search appears in those results.
 - [ ] After an unlock in singleplayer, the world folder has `bluerecipebook/<player uuid>/unlock-order.txt` listing the id, and `format.json` is `{"format":1,"since":"0.1.0"}`. On a server, that folder is `config/bluerecipebook/remote/server/<host>/<port>/`. Ids from one unlock stay in that packet's order.

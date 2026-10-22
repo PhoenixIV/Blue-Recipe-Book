@@ -199,13 +199,25 @@ public final class Lightbox {
         for (int index = 0; index < this.cells.size(); index++) {
             List<RecipeHolder<?>> cell = this.cells.get(index);
             boolean hover = index == hovered;
+            int cellX = this.cellX(index);
+            int cellY = this.cellY(index);
             if (this.alternativeRecipes) {
                 this.renderPreview(graphics, index, cell.getFirst(), craftable, hover, time);
+                if (hover) {
+                    graphics.renderOutline(cellX, cellY, CELL, CELL, 0xFFFFFFFF);
+                }
             } else {
-                this.renderIcon(graphics, index, cell, result, craftable, hover);
+                ResourceLocation item = RecipeGroup.resultId(cell.getFirst());
+                float pop = item == null ? 0.0F : NewArrivals.itemTime(item);
+                int drawIndex = index;
+                NewArrivals.animateSlot(graphics, cellX, cellY, CELL, pop, () -> {
+                    this.renderIcon(graphics, drawIndex, cell, result, craftable, hover);
+                    if (hover) {
+                        graphics.renderOutline(cellX, cellY, CELL, CELL, 0xFFFFFFFF);
+                    }
+                });
             }
             if (hover) {
-                graphics.renderOutline(this.cellX(index), this.cellY(index), CELL, CELL, 0xFFFFFFFF);
                 ItemStack stack = result.apply(cell.getFirst());
                 List<Component> lines = new ArrayList<>(Screen.getTooltipFromItem(Minecraft.getInstance(), stack));
                 if (cell.size() > 1) {

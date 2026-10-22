@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -139,6 +140,9 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     private final Map<ResourceLocation, String> resultNames = new HashMap<>();
     private int resultNamesGeneration = -1;
     private float iconTime;
+    /** {@link NewArrivals#generation()} last applied to the tabs, or -1 before the first time. */
+    private int armedArrival = -1;
+    private boolean arrivalsOpen;
     private boolean groupRecipes;
     private boolean revealAllRecipes;
     /** Page slot that opened the first lightbox, or -1 when none is open or its group is not in the visible list. */
@@ -363,21 +367,26 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
 
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.tooltip = List.of();
-        if (!this.shown || !this.isOpen()) {
+        if (!this.isOpen()) {
+            this.arrivalsOpen = false;
+            return;
+        }
+        if (!this.shown) {
             return;
         }
         // The world tick stops while this screen is open, so the icon advances from render time.
         if (!Screen.hasControlDown()) {
             this.iconTime += partialTick;
         }
+        this.armArrivals();
         graphics.pose().pushPose();
         graphics.pose().translate(0.0f, 0.0f, BOOK_Z);
         graphics.blit(BOOK_TEXTURE, this.bookX, this.bookY, 1, 1, BookLayout.IMAGE_WIDTH, BookLayout.IMAGE_HEIGHT);
         if (this.searchBox != null) {
             this.searchBox.render(graphics, mouseX, mouseY, partialTick);
         }
-        this.renderTabs(graphics, mouseX, mouseY);
-        this.renderPage(graphics, mouseX, mouseY);
+        this.renderTabs(graphics, mouseX, mouseY, partialTick);
+        this.renderPage(graphics, mouseX, mouseY, partialTick);
         this.renderOrderButton(graphics, mouseX, mouseY);
         if (!this.lightboxes.isEmpty()) {
             this.renderBookShade(graphics);
@@ -399,6 +408,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
                 this.tooltip = picked;
             }
         }
+        NewArrivals.advanceItems(partialTick);
         graphics.pose().popPose();
     }
 
@@ -638,7 +648,16 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     public void updateNarration(NarrationElementOutput output) {
     }
 
-    private void renderTabs(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void armArrivals() {
+        int arrival = NewArrivals.generation();
+        if (!this.arrivalsOpen || arrival != this.armedArrival) {
+            NewArrivals.arm(this.station);
+            this.armedArrival = arrival;
+        }
+        this.arrivalsOpen = true;
+    }
+
+    private void renderTabs(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int index = 0;
         boolean searchSelected = this.viewingSearch();
         if (this.renderTab(graphics, mouseX, mouseY, index, searchSelected, List.of(SEARCH_ICON))) {
@@ -647,7 +666,9 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         index++;
         for (BookCategory group : this.shownCategories) {
             boolean selected = !searchSelected && group == this.category;
-            if (this.renderTab(graphics, mouseX, mouseY, index, selected, group.icons())) {
+            float time = NewArrivals.tabTime(group.craftingCategory());
+            if (this.renderTab(graphics, mouseX, mouseY, index, selected, group.icons(), time, partialTick,
+                    delta -> NewArrivals.advanceTab(group.craftingCategory(), delta))) {
                 this.tooltip = List.of(group.name());
             }
             index++;
@@ -658,6 +679,23 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         int x = this.bookX - TAB_X;
         int y = this.bookY + TAB_Y + TAB_HEIGHT * index;
         int drawX = selected ? x - TAB_SELECTED_SHIFT : x;
+        this.drawTab(graphics, x, drawX, y, selected, icons);
+        return inside(mouseX, mouseY, drawX, y, TAB_WIDTH, TAB_HEIGHT);
+    }
+
+    private boolean renderTab(GuiGraphics graphics, int mouseX, int mouseY, int index, boolean selected, List<ItemStack> icons,
+            float time, float partialTick, Consumer<Float> advance) {
+        int x = this.bookX - TAB_X;
+        int y = this.bookY + TAB_Y + TAB_HEIGHT * index;
+        int drawX = selected ? x - TAB_SELECTED_SHIFT : x;
+        NewArrivals.animateTab(graphics, x, y, TAB_HEIGHT, time, () -> this.drawTab(graphics, x, drawX, y, selected, icons));
+        if (time > 0.0F) {
+            advance.accept(partialTick);
+        }
+        return inside(mouseX, mouseY, drawX, y, TAB_WIDTH, TAB_HEIGHT);
+    }
+
+    private void drawTab(GuiGraphics graphics, int x, int drawX, int y, boolean selected, List<ItemStack> icons) {
         graphics.blitSprite(selected ? TAB_SELECTED : TAB, drawX, y, TAB_WIDTH, TAB_HEIGHT);
         int shift = selected ? -TAB_SELECTED_SHIFT : 0;
         if (icons.size() >= 2) {
@@ -666,7 +704,6 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         } else if (!icons.isEmpty()) {
             graphics.renderFakeItem(icons.get(0), x + 9 + shift, y + 5);
         }
-        return inside(mouseX, mouseY, drawX, y, TAB_WIDTH, TAB_HEIGHT);
     }
 
     /**
@@ -704,7 +741,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         return inside(mouseX, mouseY, this.slotX(this.openGroupSlot), this.slotY(this.openGroupSlot), SLOT_SIZE, SLOT_SIZE);
     }
 
-    private void renderPage(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void renderPage(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int pages = this.pageCount();
         if (pages > 1) {
             Component label = Component.translatable("gui.recipebook.page", this.page + 1, pages);
@@ -718,7 +755,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
             }
             int x = this.slotX(slot);
             int y = this.slotY(slot);
-            this.renderSlot(graphics, order, x, y);
+            this.renderSlot(graphics, order, x, y, partialTick);
             if (inside(mouseX, mouseY, x, y, SLOT_SIZE, SLOT_SIZE)) {
                 this.tooltip = this.slotTooltip(order);
             }
@@ -771,11 +808,21 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
         graphics.blitSprite(sprite, x, y, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT);
     }
 
-    private void renderSlot(GuiGraphics graphics, GroupOrder order, int x, int y) {
+    private void renderSlot(GuiGraphics graphics, GroupOrder order, int x, int y, float partialTick) {
         List<RecipeHolder<?>> members = order.members();
         if (members.isEmpty()) {
             return;
         }
+        String key = RecipeGroup.key(members.getFirst(), this.groupRecipes);
+        float time = NewArrivals.claim(key, members);
+        NewArrivals.animateSlot(graphics, x, y, SLOT_SIZE, time, () -> this.drawSlot(graphics, order, x, y));
+        if (time > 0.0F) {
+            NewArrivals.advanceGroup(key, partialTick);
+        }
+    }
+
+    private void drawSlot(GuiGraphics graphics, GroupOrder order, int x, int y) {
+        List<RecipeHolder<?>> members = order.members();
         // One recipe per item. The icon walks items, never the several recipes of one item.
         List<RecipeHolder<?>> reps = order.reps();
         boolean many = members.size() > 1;
