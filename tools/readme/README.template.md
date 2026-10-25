@@ -97,7 +97,7 @@ Requires:<br>
 
 ## Roadmap
 
-Checked ✓ versions already shipped. The rest are milestones. Smaller releases can land between them.
+Checked ✓ versions already shipped. The rest are milestones. More releases can land between them to add more features etc.
 
 <br>
 
@@ -140,18 +140,23 @@ Replaces the vanilla recipe book on every vanilla screen that has one: inventory
 
 ### ❌ v0.xx - Better than Oliver
 
-Yay! It can now be used for blind & modded gaming!
+Yay! It can now be used to support blind gaming and Create mod!
 
 Minecraft 1.21.1, NeoForge, +Fabric, client-only.
 
 - Display recipes for modded crafting stations similar to [JEI]() ([Preview screenshot](https://user-images.githubusercontent.com/59342563/184558160-20c9baea-aca4-4919-8163-909561eeac6e.png))
+    - Focus on Create mod for this release
     - Hide undiscovered stations and related items
-    - Improve GUI to make it feel more vanilla
+    - Improve GUI compared to JEI to make it feel more vanilla
 - Backfill item discovery order
     - Helps players who add this mod to an existing world
     - Can only guess based on already unlocked recipe tree; vanilla does not store the order of discovery
 
-Add more features
+<br>
+
+### ❌ v0.xx - Broad mod support
+
+While the previous milestone was focused on Create mod, this milestone officially supports and is tested against a wide variety of mods that add their own crafting stations / recipes etc.
 
 <br>
 
