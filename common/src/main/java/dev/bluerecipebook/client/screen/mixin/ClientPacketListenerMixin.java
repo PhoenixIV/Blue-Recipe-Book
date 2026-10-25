@@ -10,8 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/** Client-side hook on the recipe packet: unlocks, removals, and the initial sync on join. */
 @Mixin(ClientPacketListener.class)
 public class ClientPacketListenerMixin {
+    /** Keeps discovery order and strict discovery in step with the recipes the server adds or removes. */
     @Inject(method = "handleAddOrRemoveRecipes(Lnet/minecraft/network/protocol/game/ClientboundRecipePacket;)V", at = @At("RETURN"))
     private void blueRecipeBook$recordDiscovery(ClientboundRecipePacket packet, CallbackInfo callback) {
         switch (packet.getState()) {
@@ -29,6 +31,7 @@ public class ClientPacketListenerMixin {
         }
     }
 
+    /** Starts a fresh new-arrivals baseline on join, so recipes already held do not count as new. */
     @Inject(method = "handleAddOrRemoveRecipes(Lnet/minecraft/network/protocol/game/ClientboundRecipePacket;)V", at = @At("RETURN"))
     private void blueRecipeBook$initialArrivals(ClientboundRecipePacket packet, CallbackInfo callback) {
         if (packet.getState() == ClientboundRecipePacket.State.INIT) {

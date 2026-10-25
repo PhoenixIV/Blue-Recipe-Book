@@ -154,6 +154,11 @@ public final class NewArrivals {
         return groupTime.getOrDefault(groupKey, 0.0F);
     }
 
+    /**
+     * Shortens the pop of {@code groupKey}.
+     *
+     * @param delta render partial tick since the previous frame
+     */
     public static void advanceGroup(String groupKey, float delta) {
         Float time = groupTime.get(groupKey);
         if (time == null) {
@@ -167,11 +172,16 @@ public final class NewArrivals {
         }
     }
 
+    /** Returns the pop time left for {@code item}, or 0 when it is still. */
     public static float itemTime(ResourceLocation item) {
         return itemTime.getOrDefault(item, 0.0F);
     }
 
-    /** Advances every item pop. Draw first, then call once per frame while the book is open. */
+    /**
+     * Advances every item pop. Draw first, then call once per frame while the book is open.
+     *
+     * @param delta render partial tick since the previous frame
+     */
     public static void advanceItems(float delta) {
         itemTime.entrySet().removeIf(entry -> {
             float left = entry.getValue() - delta;
@@ -183,10 +193,16 @@ public final class NewArrivals {
         });
     }
 
+    /** Returns the pop time left for {@code category}'s tab, or 0 when it is still. */
     public static float tabTime(CraftingBookCategory category) {
         return tabTime.getOrDefault(category, 0.0F);
     }
 
+    /**
+     * Shortens the pop of {@code category}'s tab.
+     *
+     * @param delta render partial tick since the previous frame
+     */
     public static void advanceTab(CraftingBookCategory category, float delta) {
         Float time = tabTime.get(category);
         if (time == null) {

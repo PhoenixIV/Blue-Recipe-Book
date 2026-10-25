@@ -140,7 +140,7 @@ public final class BlueBook implements GuiEventListener, NarratableEntry {
     private final Map<ResourceLocation, String> resultNames = new HashMap<>();
     private int resultNamesGeneration = -1;
     private float iconTime;
-    /** {@link NewArrivals#generation()} last applied to the tabs, or -1 before the first time. */
+    /** {@link NewArrivals#generation()} last applied to the tabs, or {@code -1} before the first time. */
     private int armedArrival = -1;
     private boolean arrivalsOpen;
     private boolean groupRecipes;
