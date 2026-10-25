@@ -11,14 +11,14 @@ Write no comment by default. Write one only when the reader would otherwise miss
 - Keep a comment short, tags aside.
 - Do not describe what a line or block does. Rename or extract a method instead.
 - Do not repeat a member's name or signature in its doc.
-- Do not say where code is used, which task added it, or what it replaced. That goes stale.
+- Do not name the callers, which task added the code, or what it replaced. That goes stale. Saying what makes a hook run is not naming a caller.
 - State only what the code or the user told you. A guessed intent is worse than no comment.
 - When you change code, update or delete the comment above it.
 - Do not add comments to code you did not change. Do not remove existing ones unless their code is gone or they are wrong.
 
 ## Line comments
 
-Use `//` for a trap the code hides: a vanilla or mixin quirk, a required order, a branch that looks unfinished but is deliberate. Put it on the line it explains.
+Use `//` for a trap the code hides: a vanilla or mixin quirk, a required order, a branch that looks unfinished but is deliberate. Put it on the line it explains. It covers only that line or branch; what a method is for belongs in its Javadoc.
 
 Good, it gives a reason the code cannot show:
 
@@ -38,9 +38,10 @@ for (RecipeHolder<?> holder : recipes) {
 
 ## Javadoc
 
-Write one when the contract is more than the name says: what the caller must do first, what stays untouched, what an empty or null argument means, what a later packet or tick undoes. Skip simple getters and overrides that keep the parent's contract.
+Write one when the contract is more than the name says: what the caller must do first, what stays untouched, what an empty or null argument means, what a later packet or tick undoes. Also write one for a class or method that only hooks, forwards, or reacts, when neither its name nor its body says what it is for or what makes it run. Skip simple getters and overrides that keep the parent's contract. Do not skip a short member when a reader would not know a term in its name.
 
 - Open with a summary sentence. A method gets a third-person verb phrase ("Returns ...", "Clears ..."). A class or field gets a noun phrase. Not "This method ...".
+- The first sentence stands alone. Tooltips and indexes show only that sentence.
 - Say what the caller gets, not how it works.
 - Parameters go in `@param`, the result in `@return`, an exception the caller must handle in `@throws`, in that order.
 - Tag only what adds something the name and type do not: a unit, a range, what empty or null means. Leave other parameters untagged.
